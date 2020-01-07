@@ -4,9 +4,10 @@
 # Copyright (c) 2015-2020 Denis Leonov <466611@gmail.com>
 #
 
-import os
 import datetime
 import hashlib
+import os
+import time
 
 
 def reverse(input):
@@ -50,7 +51,8 @@ for i in fList:
     resList = []
     a = 0
     t = dirA + nameSrc
-    print("Start " + t + " in " + str(datetime.datetime.now()))
+    print(f"Parsing {nameSrc}, started at {time.strftime('%H:%M:%S', time.localtime())}...", end=" ", flush=True)
+    start = time.monotonic()
     with open(t, "rb") as f:
         tmpHex = ""
         fSize = os.path.getsize(t)
@@ -370,3 +372,4 @@ for i in fList:
             tmpHex = ""
     with open(dirB + nameRes, "w") as f:
         f.write("\n".join(resList))
+    print(f"Done in {time.monotonic() - start :.1f} seconds.")
