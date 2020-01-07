@@ -9,23 +9,16 @@ import hashlib
 import os
 import sys
 import time
+from textwrap import wrap
 
 
 assert sys.version_info >= (3, 6)
 
 
-def reverse(input):
-    L = len(input)
-    if (L % 2) != 0:
+def reverse_pairs(string_of_pairs):
+    if len(string_of_pairs) % 2:
         return None
-    else:
-        Res = ""
-        L = L // 2
-        for i in range(L):
-            T = input[i * 2] + input[i * 2 + 1]
-            Res = T + Res
-            T = ""
-        return Res
+    return "".join(reversed(wrap(string_of_pairs, 2)))
 
 
 def merkle_root(lst):  # https://gist.github.com/anonymous/7eb080a67398f648c1709e41890f8c44
@@ -81,7 +74,7 @@ for i in fList:
             tmpHex = hashlib.new("sha256", tmpHex).digest()
             tmpHex = hashlib.new("sha256", tmpHex).digest()
             tmpHex = tmpHex.hex().upper()
-            tmpHex = reverse(tmpHex)
+            tmpHex = reverse_pairs(tmpHex)
             resList.append("SHA256 hash of the current block hash = " + tmpHex)
             f.seek(tmpPos3, 0)
             tmpHex = ""
@@ -153,7 +146,7 @@ for i in fList:
                     b = b.hex().upper()
                     tmpHex = b + tmpHex
                 resList.append("transactionVersionNumber = " + tmpHex)
-                RawTX = reverse(tmpHex)
+                RawTX = reverse_pairs(tmpHex)
                 tmpHex = ""
                 b = f.read(1)
                 tmpB = b.hex().upper()
@@ -188,7 +181,7 @@ for i in fList:
                 inCount = int(tmpHex, 16)
                 resList.append("Inputs count = " + tmpHex)
                 tmpHex = tmpHex + tmpB
-                RawTX = RawTX + reverse(tmpHex)
+                RawTX = RawTX + reverse_pairs(tmpHex)
                 tmpHex = ""
                 for m in range(inCount):
                     for j in range(32):
@@ -196,14 +189,14 @@ for i in fList:
                         b = b.hex().upper()
                         tmpHex = b + tmpHex
                     resList.append("TX from hash = " + tmpHex)
-                    RawTX = RawTX + reverse(tmpHex)
+                    RawTX = RawTX + reverse_pairs(tmpHex)
                     tmpHex = ""
                     for j in range(4):
                         b = f.read(1)
                         b = b.hex().upper()
                         tmpHex = b + tmpHex
                     resList.append("N output = " + tmpHex)
-                    RawTX = RawTX + reverse(tmpHex)
+                    RawTX = RawTX + reverse_pairs(tmpHex)
                     tmpHex = ""
                     b = f.read(1)
                     tmpB = b.hex().upper()
@@ -225,7 +218,7 @@ for i in fList:
                         tmpHex = b + tmpHex
                     scriptLength = int(tmpHex, 16)
                     tmpHex = tmpHex + tmpB
-                    RawTX = RawTX + reverse(tmpHex)
+                    RawTX = RawTX + reverse_pairs(tmpHex)
                     tmpHex = ""
                     for j in range(scriptLength):
                         b = f.read(1)
@@ -262,7 +255,7 @@ for i in fList:
                 outputCount = int(tmpHex, 16)
                 tmpHex = tmpHex + tmpB
                 resList.append("Outputs count = " + str(outputCount))
-                RawTX = RawTX + reverse(tmpHex)
+                RawTX = RawTX + reverse_pairs(tmpHex)
                 tmpHex = ""
                 for m in range(outputCount):
                     for j in range(8):
@@ -270,7 +263,7 @@ for i in fList:
                         b = b.hex().upper()
                         tmpHex = b + tmpHex
                     Value = tmpHex
-                    RawTX = RawTX + reverse(tmpHex)
+                    RawTX = RawTX + reverse_pairs(tmpHex)
                     tmpHex = ""
                     b = f.read(1)
                     tmpB = b.hex().upper()
@@ -292,7 +285,7 @@ for i in fList:
                         tmpHex = b + tmpHex
                     scriptLength = int(tmpHex, 16)
                     tmpHex = tmpHex + tmpB
-                    RawTX = RawTX + reverse(tmpHex)
+                    RawTX = RawTX + reverse_pairs(tmpHex)
                     tmpHex = ""
                     for j in range(scriptLength):
                         b = f.read(1)
@@ -355,14 +348,14 @@ for i in fList:
                     b = b.hex().upper()
                     tmpHex = b + tmpHex
                 resList.append("Lock time = " + tmpHex)
-                RawTX = RawTX + reverse(tmpHex)
+                RawTX = RawTX + reverse_pairs(tmpHex)
                 tmpHex = ""
                 tmpHex = RawTX
                 tmpHex = bytes.fromhex(tmpHex)
                 tmpHex = hashlib.new("sha256", tmpHex).digest()
                 tmpHex = hashlib.new("sha256", tmpHex).digest()
                 tmpHex = tmpHex.hex().upper()
-                tmpHex = reverse(tmpHex)
+                tmpHex = reverse_pairs(tmpHex)
                 resList.append("TX hash = " + tmpHex)
                 tx_hashes.append(tmpHex)
                 tmpHex = ""
