@@ -8,7 +8,7 @@ import os
 import datetime
 import hashlib
 
-    
+
 def reverse(input):
     L = len(input)
     if (L % 2) != 0:
@@ -47,7 +47,6 @@ for i in fList:
     resList = []
     a = 0
     t = dirA + nameSrc
-    resList.append('Start ' + t + ' in ' + str(datetime.datetime.now()))
     print ('Start ' + t + ' in ' + str(datetime.datetime.now()))
     f = open(t,'rb')
     tmpHex = ''
