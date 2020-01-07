@@ -7,7 +7,11 @@
 import datetime
 import hashlib
 import os
+import sys
 import time
+
+
+assert sys.version_info >= (3, 6)
 
 
 def reverse(input):
