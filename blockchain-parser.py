@@ -9,16 +9,21 @@ import hashlib
 import os
 import sys
 import time
-from textwrap import wrap
 
 
 assert sys.version_info >= (3, 6)
 
 
 def reverse_pairs(string_of_pairs):
-    if len(string_of_pairs) % 2:
+    L = len(string_of_pairs)
+    if L % 2:
         return None
-    return "".join(reversed(wrap(string_of_pairs, 2)))
+    if L == 2:
+        return string_of_pairs
+    result = ""
+    for x, y in zip(*[iter(string_of_pairs)] * 2):
+        result = f"{x}{y}{result}"
+    return result
 
 
 def merkle_root(lst):  # https://gist.github.com/anonymous/7eb080a67398f648c1709e41890f8c44
