@@ -244,7 +244,7 @@ for input_fname in fnames:
                     for j in range(8):
                         b = f.read(1).hex().upper()
                         tmp_hex = b + tmp_hex
-                    value = tmp_hex
+                    output.append(f"Value: {tmp_hex}")
                     raw_tx = raw_tx + reverse_pairs(tmp_hex)
                     tmp_hex = ""
                     b = f.read(1)
@@ -271,7 +271,6 @@ for input_fname in fnames:
                     for j in range(script_length):
                         b = f.read(1).hex().upper()
                         tmp_hex = tmp_hex + b
-                    output.append(f"Value: {value}")
                     output.append(f"Output script: {tmp_hex}")
                     raw_tx = raw_tx + tmp_hex
                     tmp_hex = ""
