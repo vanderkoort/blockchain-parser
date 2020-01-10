@@ -50,7 +50,6 @@ fnames.sort()
 for input_fname in fnames:
     output_fname = input_fname.replace(".dat", ".txt")
     output = []
-    a = 0
     t = f"{input_dir}/{input_fname}"
     print(f"Parsing {input_fname}, started at {time.strftime('%H:%M:%S', time.localtime())}...", end=" ", flush=True)
     start = time.monotonic()
@@ -366,12 +365,13 @@ for input_fname in fnames:
                 output.append("")
                 raw_tx = ""
             output.append("")
-            a += 1
+
             tx_hashes = [bytes.fromhex(h) for h in tx_hashes]
             tmp_hex = get_merkle_root(tx_hashes).hex().upper()
             if tmp_hex != merkle_root:
                 print("Merkle roots do not match! >", merkle_root, tmp_hex)
             tmp_hex = ""
+
     with open(f"{output_dir}/{output_fname}", "w") as f:
         f.write("\n".join(output))
     print(f"Done in {time.monotonic() - start :.1f} seconds.")
