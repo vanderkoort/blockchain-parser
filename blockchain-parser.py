@@ -58,20 +58,17 @@ for input_fname in fnames:
         input_fsize = os.path.getsize(t)
         while f.tell() != input_fsize:
             for j in range(4):
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = b + tmp_hex
             tmp_hex = ""
             for j in range(4):
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = b + tmp_hex
             output.append(f"Block size: {tmp_hex}")
             tmp_hex = ""
             pos_3 = f.tell()
             while f.tell() != pos_3 + 80:
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = tmp_hex + b
             tmp_hex = bytes.fromhex(tmp_hex)
             tmp_hex = hashlib.new("sha256", tmp_hex).digest()
@@ -82,39 +79,33 @@ for input_fname in fnames:
             f.seek(pos_3, 0)
             tmp_hex = ""
             for j in range(4):
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = b + tmp_hex
             output.append(f"Version: {tmp_hex}")
             tmp_hex = ""
             for j in range(32):
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = b + tmp_hex
             output.append(f"SHA256 hash of the previous block hash: {tmp_hex}")
             tmp_hex = ""
             for j in range(32):
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = b + tmp_hex
             output.append(f"MerkleRoot hash: {tmp_hex}")
             merkle_root = tmp_hex
             tmp_hex = ""
             for j in range(4):
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = b + tmp_hex
             output.append(f"Time stamp: {tmp_hex}")
             tmp_hex = ""
             for j in range(4):
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = b + tmp_hex
             output.append(f"Difficulty: {tmp_hex}")
             tmp_hex = ""
             for j in range(4):
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = b + tmp_hex
             output.append(f"Random number: {tmp_hex}")
             tmp_hex = ""
@@ -131,8 +122,7 @@ for input_fname in fnames:
             if b_int == 255:
                 c = 9
             for j in range(1, c):
-                b = f.read(1)
-                b = b.hex().upper()
+                b = f.read(1).hex().upper()
                 tmp_hex = b + tmp_hex
             trans_count = int(tmp_hex, 16)
             output.append(f"Transactions count: {trans_count}")
@@ -145,8 +135,7 @@ for input_fname in fnames:
             for k in range(trans_count):
                 pos_1 = f.tell()
                 for j in range(4):
-                    b = f.read(1)
-                    b = b.hex().upper()
+                    b = f.read(1).hex().upper()
                     tmp_hex = b + tmp_hex
                 output.append(f"Transaction version: {tmp_hex}")
                 raw_tx = reverse_pairs(tmp_hex)
@@ -178,8 +167,7 @@ for input_fname in fnames:
                 if b_int == 255:
                     c = 9
                 for j in range(1, c):
-                    b = f.read(1)
-                    b = b.hex().upper()
+                    b = f.read(1).hex().upper()
                     tmp_hex = b + tmp_hex
                 in_count = int(tmp_hex, 16)
                 output.append(f"Inputs count: {tmp_hex}")
@@ -188,15 +176,13 @@ for input_fname in fnames:
                 tmp_hex = ""
                 for m in range(in_count):
                     for j in range(32):
-                        b = f.read(1)
-                        b = b.hex().upper()
+                        b = f.read(1).hex().upper()
                         tmp_hex = b + tmp_hex
                     output.append(f"TX from hash: {tmp_hex}")
                     raw_tx = raw_tx + reverse_pairs(tmp_hex)
                     tmp_hex = ""
                     for j in range(4):
-                        b = f.read(1)
-                        b = b.hex().upper()
+                        b = f.read(1).hex().upper()
                         tmp_hex = b + tmp_hex
                     output.append(f"N output: {tmp_hex}")
                     raw_tx = raw_tx + reverse_pairs(tmp_hex)
@@ -216,23 +202,20 @@ for input_fname in fnames:
                     if b_int == 255:
                         c = 9
                     for j in range(1, c):
-                        b = f.read(1)
-                        b = b.hex().upper()
+                        b = f.read(1).hex().upper()
                         tmp_hex = b + tmp_hex
                     script_length = int(tmp_hex, 16)
                     tmp_hex = tmp_hex + tmp_b
                     raw_tx = raw_tx + reverse_pairs(tmp_hex)
                     tmp_hex = ""
                     for j in range(script_length):
-                        b = f.read(1)
-                        b = b.hex().upper()
+                        b = f.read(1).hex().upper()
                         tmp_hex = tmp_hex + b
                     output.append(f"Input script: {tmp_hex}")
                     raw_tx = raw_tx + tmp_hex
                     tmp_hex = ""
                     for j in range(4):
-                        b = f.read(1)
-                        b = b.hex().upper()
+                        b = f.read(1).hex().upper()
                         tmp_hex = tmp_hex + b
                     output.append(f"Sequence: {tmp_hex}")
                     raw_tx = raw_tx + tmp_hex
@@ -252,8 +235,7 @@ for input_fname in fnames:
                 if b_int == 255:
                     c = 9
                 for j in range(1, c):
-                    b = f.read(1)
-                    b = b.hex().upper()
+                    b = f.read(1).hex().upper()
                     tmp_hex = b + tmp_hex
                 output_count = int(tmp_hex, 16)
                 tmp_hex = tmp_hex + tmp_b
@@ -262,8 +244,7 @@ for input_fname in fnames:
                 tmp_hex = ""
                 for m in range(output_count):
                     for j in range(8):
-                        b = f.read(1)
-                        b = b.hex().upper()
+                        b = f.read(1).hex().upper()
                         tmp_hex = b + tmp_hex
                     value = tmp_hex
                     raw_tx = raw_tx + reverse_pairs(tmp_hex)
@@ -283,16 +264,14 @@ for input_fname in fnames:
                     if b_int == 255:
                         c = 9
                     for j in range(1, c):
-                        b = f.read(1)
-                        b = b.hex().upper()
+                        b = f.read(1).hex().upper()
                         tmp_hex = b + tmp_hex
                     script_length = int(tmp_hex, 16)
                     tmp_hex = tmp_hex + tmp_b
                     raw_tx = raw_tx + reverse_pairs(tmp_hex)
                     tmp_hex = ""
                     for j in range(script_length):
-                        b = f.read(1)
-                        b = b.hex().upper()
+                        b = f.read(1).hex().upper()
                         tmp_hex = tmp_hex + b
                     output.append(f"Value: {value}")
                     output.append(f"Output script: {tmp_hex}")
@@ -314,8 +293,7 @@ for input_fname in fnames:
                         if b_int == 255:
                             c = 9
                         for j in range(1, c):
-                            b = f.read(1)
-                            b = b.hex().upper()
+                            b = f.read(1).hex().upper()
                             tmp_hex = b + tmp_hex
                         witness_length = int(tmp_hex, 16)
                         tmp_hex = ""
@@ -334,21 +312,18 @@ for input_fname in fnames:
                             if b_int == 255:
                                 c = 9
                             for j in range(1, c):
-                                b = f.read(1)
-                                b = b.hex().upper()
+                                b = f.read(1).hex().upper()
                                 tmp_hex = b + tmp_hex
                             witness_item_length = int(tmp_hex, 16)
                             tmp_hex = ""
                             for p in range(witness_item_length):
-                                b = f.read(1)
-                                b = b.hex().upper()
+                                b = f.read(1).hex().upper()
                                 tmp_hex = b + tmp_hex
                             output.append(f"Witness {m} {j} {witness_item_length} {tmp_hex}")
                             tmp_hex = ""
                 is_witness = False
                 for j in range(4):
-                    b = f.read(1)
-                    b = b.hex().upper()
+                    b = f.read(1).hex().upper()
                     tmp_hex = b + tmp_hex
                 output.append(f"Lock time: {tmp_hex}")
                 raw_tx = raw_tx + reverse_pairs(tmp_hex)
