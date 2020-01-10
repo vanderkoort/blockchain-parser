@@ -367,10 +367,9 @@ for input_fname in fnames:
             output.append("")
 
             tx_hashes = [bytes.fromhex(h) for h in tx_hashes]
-            tmp_hex = get_merkle_root(tx_hashes).hex().upper()
-            if tmp_hex != merkle_root:
-                print("Merkle roots do not match! >", merkle_root, tmp_hex)
-            tmp_hex = ""
+            computed_merkle_root = get_merkle_root(tx_hashes).hex().upper()
+            if computed_merkle_root != merkle_root:
+                print("Merkle roots do not match!\n{merkle_root}\n{computed_merkle_root}")
 
     with open(f"{output_dir}/{output_fname}", "w") as f:
         f.write("\n".join(output))
