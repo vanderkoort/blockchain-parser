@@ -57,9 +57,7 @@ for input_fname in fnames:
         tmp_hex = ""
         input_fsize = os.path.getsize(t)
         while f.tell() != input_fsize:
-            for j in range(4):
-                b = f.read(1).hex().upper()
-                tmp_hex = b + tmp_hex
+            f.seek(4, 1)  # skip 4 bytes
             tmp_hex = ""
             for j in range(4):
                 b = f.read(1).hex().upper()
