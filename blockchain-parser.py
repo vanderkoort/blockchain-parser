@@ -4,7 +4,6 @@
 # Copyright (c) 2015-2020 Denis Leonov <466611@gmail.com>
 #
 
-import datetime
 import hashlib
 import os
 import sys
