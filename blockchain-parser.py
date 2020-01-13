@@ -127,9 +127,9 @@ for input_fname in fnames:
                 if flag == 255: c = 8
                 value = f.read(c)[::-1].hex().upper() + appendix_1
                 inputs_count = int(value, 16)
-                output.append(f"Inputs count: {value}")
                 value = value + appendix_2
 
+                output.append(f"Inputs count: {inputs_count}")
                 raw = raw + reverse_pairs(value)
                 for _ in range(inputs_count):
                     value = f.read(32)[::-1].hex().upper()
