@@ -78,15 +78,15 @@ for input_fname in fnames:
             value = read_from_file(f, 4)
             output.append(f"Block size: {value}")
             value = ""
-            pos_3 = f.tell()
-            while f.tell() != pos_3 + 80:
+            pos_hash = f.tell()
+            while f.tell() != pos_hash + 80:
                 b = f.read(1).hex().upper()
                 value = value + b
             value = bytes.fromhex(value)
             value = sha256digdig(value)
             value = reverse_pairs(value.hex().upper())
             output.append(f"SHA256 hash of the current block hash: {value}")
-            f.seek(pos_3, 0)
+            f.seek(pos_hash, 0)
             output.append(f"Version: {read_from_file(f, 4)}")
             output.append(f"SHA256 hash of the previous block hash: {read_from_file(f, 32)}")
             merkle_root = read_from_file(f, 32)
@@ -98,12 +98,9 @@ for input_fname in fnames:
             trans_count = int(value, 16)
             output.append(f"Transactions count: {trans_count}")
             output.append("")
-            pos_1 = 0
-            pos_2 = 0
             tx_hashes = []
-            for k in range(trans_count):
+            for _ in range(trans_count):
                 raw_tx = ""
-                pos_1 = f.tell()
                 value = read_from_file(f, 4)
                 output.append(f"Transaction version: {value}")
                 raw_tx = reverse_pairs(value)
@@ -113,11 +110,7 @@ for input_fname in fnames:
                 b_int = int(b.hex(), 16)
                 is_witness = False
                 if b_int == 0:
-                    tmp_b = ""
-                    c = 0
-                    c = f.read(1)
-                    b_int = int(c.hex(), 16)
-                    c = 0
+                    f.seek(1, 1)  # skip 1 byte
                     c = f.read(1)
                     b_int = int(c.hex(), 16)
                     tmp_b = c.hex().upper()
@@ -137,11 +130,11 @@ for input_fname in fnames:
                 for j in range(1, c):
                     b = f.read(1).hex().upper()
                     value = b + value
-                in_count = int(value, 16)
+                inputs_count = int(value, 16)
                 output.append(f"Inputs count: {value}")
                 value = value + tmp_b
                 raw_tx = raw_tx + reverse_pairs(value)
-                for m in range(in_count):
+                for _ in range(inputs_count):
                     value = read_from_file(f, 32)
                     output.append(f"TX from hash: {value}")
                     raw_tx = raw_tx + reverse_pairs(value)
@@ -199,11 +192,11 @@ for input_fname in fnames:
                 for j in range(1, c):
                     b = f.read(1).hex().upper()
                     value = b + value
-                output_count = int(value, 16)
+                outputs_count = int(value, 16)
                 value = value + tmp_b
-                output.append(f"Outputs count: {output_count}")
+                output.append(f"Outputs count: {outputs_count}")
                 raw_tx = raw_tx + reverse_pairs(value)
-                for m in range(output_count):
+                for m in range(outputs_count):
                     value = read_from_file(f, 8)
                     output.append(f"Value: {value}")
                     raw_tx = raw_tx + reverse_pairs(value)
@@ -235,7 +228,7 @@ for input_fname in fnames:
                     output.append(f"Output script: {value}")
                     raw_tx = raw_tx + value
                 if is_witness:
-                    for m in range(in_count):
+                    for m in range(inputs_count):
                         value = flagged_read_from_file(f)
                         witness_length = int(value, 16)
                         for j in range(witness_length):
