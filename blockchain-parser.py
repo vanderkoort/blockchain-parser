@@ -94,13 +94,13 @@ for input_fname in fnames:
                 raw = reverse_pairs(value)
                 value = ""
                 b = f.read(1)
+                b_int = ord(b)
                 tmp_b = b.hex().upper()
-                b_int = int(b.hex(), 16)
                 is_witness = False
                 if b_int == 0:
                     f.seek(1, 1)  # skip 1 byte
                     c = f.read(1)
-                    b_int = int(c.hex(), 16)
+                    b_int = ord(c)
                     tmp_b = c.hex().upper()
                     is_witness = True
                     output.append("Witness activated")
@@ -128,8 +128,8 @@ for input_fname in fnames:
                     raw = raw + reverse_pairs(value)
                     value = ""
                     b = f.read(1)
+                    b_int = ord(b)
                     tmp_b = b.hex().upper()
-                    b_int = int(b.hex(), 16)
                     c = 0
                     if b_int < 253:
                         value = b.hex().upper()
@@ -152,8 +152,8 @@ for input_fname in fnames:
                     raw = raw + value
                 value = ""
                 b = f.read(1)
+                b_int = ord(b)
                 tmp_b = b.hex().upper()
-                b_int = int(b.hex(), 16)
                 c = 0
                 if b_int < 253:
                     value = b.hex().upper()
@@ -175,8 +175,8 @@ for input_fname in fnames:
                     raw = raw + reverse_pairs(value)
                     value = ""
                     b = f.read(1)
+                    b_int = ord(b)
                     tmp_b = b.hex().upper()
-                    b_int = int(b.hex(), 16)
                     c = 0
                     if b_int < 253:
                         value = b.hex().upper()
