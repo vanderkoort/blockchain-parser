@@ -9,7 +9,6 @@ import time
 
 assert sys.version_info >= (3, 6)
 
-
 input_dir = "_blocks"  # Folder with blk*.dat files
 output_dir = "_result"
 if len(sys.argv) == 3:
@@ -184,5 +183,5 @@ for input_fname in fnames:
                 print("Merkle roots do not match!\n{merkle_root}\n{computed_merkle_root}")
 
     with open(f"{output_dir}/{output_fname}", "w") as f:
-        f.write("\n".join(output))
+        f.write("\n".join(output).strip())
     print(f"Done in {time.monotonic() - start :.1f} seconds.")
