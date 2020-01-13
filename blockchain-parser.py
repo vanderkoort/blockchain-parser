@@ -13,6 +13,14 @@ import time
 assert sys.version_info >= (3, 6)
 
 
+input_dir = "_blocks"  # Folder with blk*.dat files
+output_dir = "_result"
+if len(sys.argv) == 3:
+    input_dir, output_dir = sys.argv[1], sys.argv[2]
+if not os.path.isdir(output_dir):
+    os.makedirs(output_dir)
+
+
 def reverse_pairs(string_of_pairs):
     L = len(string_of_pairs)
     if L % 2:
@@ -62,13 +70,6 @@ def read_value_and_len(file):
         value = value + b
     return value.hex().upper(), length
 
-
-input_dir = "_blocks"  # Folder with blk*.dat files
-output_dir = "_result"
-if len(sys.argv) == 3:
-    input_dir, output_dir = sys.argv[1], sys.argv[2]
-if not os.path.isdir(output_dir):
-    os.makedirs(output_dir)
 
 fnames = os.listdir(input_dir)
 fnames = [x for x in fnames if (x.endswith(".dat") and x.startswith("blk"))]
