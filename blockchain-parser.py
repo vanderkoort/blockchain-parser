@@ -54,7 +54,6 @@ for input_fname in fnames:
     print(f"Parsing {input_fname}, started at {time.strftime('%H:%M:%S', time.localtime())}...", end=" ", flush=True)
     start = time.monotonic()
     with open(t, "rb") as f:
-        tmp_hex = ""
         input_fsize = os.path.getsize(t)
         while f.tell() != input_fsize:
             f.seek(4, 1)  # skip 4 bytes
@@ -125,12 +124,12 @@ for input_fname in fnames:
             trans_count = int(tmp_hex, 16)
             output.append(f"Transactions count: {trans_count}")
             output.append("")
-            tmp_hex = ""
             pos_1 = 0
             pos_2 = 0
-            raw_tx = ""
             tx_hashes = []
             for k in range(trans_count):
+                tmp_hex = ""
+                raw_tx = ""
                 pos_1 = f.tell()
                 for j in range(4):
                     b = f.read(1).hex().upper()
@@ -324,7 +323,6 @@ for input_fname in fnames:
                     tmp_hex = b + tmp_hex
                 output.append(f"Lock time: {tmp_hex}")
                 raw_tx = raw_tx + reverse_pairs(tmp_hex)
-                tmp_hex = ""
                 tmp_hex = raw_tx
                 tmp_hex = bytes.fromhex(tmp_hex)
                 tmp_hex = hashlib.new("sha256", tmp_hex).digest()
@@ -333,9 +331,7 @@ for input_fname in fnames:
                 tmp_hex = reverse_pairs(tmp_hex)
                 output.append(f"TX hash: {tmp_hex}")
                 tx_hashes.append(tmp_hex)
-                tmp_hex = ""
                 output.append("")
-                raw_tx = ""
             output.append("")
 
             tx_hashes = [bytes.fromhex(h) for h in tx_hashes]
