@@ -38,13 +38,13 @@ def get_merkle_root(lst):  # https://gist.github.com/anonymous/7eb080a67398f648c
     return get_merkle_root([hash_pair(x, y) for x, y in zip(*[iter(lst)] * 2)])
 
 
-def flagged_read_from_file(file):
+def read_flag(file):
     b = file.read(1)
     flag = ord(b)
     amount_to_read = 2 if flag == 253 else \
                      4 if flag == 254 else \
                      8 if flag == 255 else 0
-    return f.read(amount_to_read)[::-1].hex().upper() if amount_to_read else b.hex().upper()
+    return f.read(amount_to_read)[::-1] if amount_to_read else b
 
 
 
@@ -83,8 +83,7 @@ for input_fname in fnames:
             output.append(f"Time stamp: {f.read(4)[::-1].hex().upper()}")
             output.append(f"Difficulty: {f.read(4)[::-1].hex().upper()}")
             output.append(f"Random number: {f.read(4)[::-1].hex().upper()}")
-            value = flagged_read_from_file(f)
-            trans_count = int(value, 16)
+            trans_count = int(read_flag(f).hex(), 16)
             output.append(f"Transactions count: {trans_count}")
             output.append("")
             tx_hashes = []
@@ -185,7 +184,7 @@ for input_fname in fnames:
                 value = value + tmp_b
                 output.append(f"Outputs count: {outputs_count}")
                 raw_tx = raw_tx + reverse_pairs(value)
-                for m in range(outputs_count):
+                for _ in range(outputs_count):
                     value = f.read(8)[::-1].hex().upper()
                     output.append(f"Value: {value}")
                     raw_tx = raw_tx + reverse_pairs(value)
@@ -217,21 +216,18 @@ for input_fname in fnames:
                     output.append(f"Output script: {value}")
                     raw_tx = raw_tx + value
                 if is_witness:
-                    for m in range(inputs_count):
-                        value = flagged_read_from_file(f)
-                        witness_length = int(value, 16)
-                        for j in range(witness_length):
-                            value = flagged_read_from_file(f)
-                            witness_item_length = int(value, 16)
+                    for i_input in range(inputs_count):
+                        witness_length = int(read_flag(f).hex(), 16)
+                        for i_witness in range(witness_length):
+                            witness_item_length = int(read_flag(f).hex(), 16)
                             value = f.read(witness_item_length)[::-1].hex().upper()
-                            output.append(f"Witness {m} {j} {witness_item_length} {value}")
+                            output.append(f"Witness {i_input} {i_witness} {witness_item_length} {value}")
                 is_witness = False
                 value = f.read(4)[::-1].hex().upper()
                 output.append(f"Lock time: {value}")
                 raw_tx = raw_tx + reverse_pairs(value)
                 value = bytes.fromhex(raw_tx)
-                value = sha256digdig(value)
-                value = reverse_pairs(value.hex().upper())
+                value = reverse_pairs(sha256digdig(value).hex().upper())
                 output.append(f"TX hash: {value}")
                 tx_hashes.append(bytes.fromhex(value))
                 output.append("")
