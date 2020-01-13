@@ -39,6 +39,14 @@ def get_merkle_root(lst):  # https://gist.github.com/anonymous/7eb080a67398f648c
     return get_merkle_root([hash_pair(x, y) for x, y in zip(*[iter(lst)] * 2)])
 
 
+def read_from_file(file, count):
+    hex_value = ""
+    for i in range(count):
+        b = file.read(1).hex().upper()
+        hex_value = b + hex_value
+    return hex_value
+
+
 input_dir = "_blocks"  # Folder with blk*.dat files
 output_dir = "_result"
 if len(sys.argv) == 3:
@@ -60,10 +68,7 @@ for input_fname in fnames:
         input_fsize = os.path.getsize(t)
         while f.tell() != input_fsize:
             f.seek(4, 1)  # skip 4 bytes
-            value = ""
-            for j in range(4):
-                b = f.read(1).hex().upper()
-                value = b + value
+            value = read_from_file(f, 4)
             output.append(f"Block size: {value}")
             value = ""
             pos_3 = f.tell()
@@ -72,40 +77,21 @@ for input_fname in fnames:
                 value = value + b
             value = bytes.fromhex(value)
             value = sha256digdig(value)
-            value = value.hex().upper()
-            value = reverse_pairs(value)
+            value = reverse_pairs(value.hex().upper())
             output.append(f"SHA256 hash of the current block hash: {value}")
             f.seek(pos_3, 0)
-            value = ""
-            for j in range(4):
-                b = f.read(1).hex().upper()
-                value = b + value
+            value = read_from_file(f, 4)
             output.append(f"Version: {value}")
-            value = ""
-            for j in range(32):
-                b = f.read(1).hex().upper()
-                value = b + value
+            value = read_from_file(f, 32)
             output.append(f"SHA256 hash of the previous block hash: {value}")
-            value = ""
-            for j in range(32):
-                b = f.read(1).hex().upper()
-                value = b + value
+            value = read_from_file(f, 32)
             output.append(f"MerkleRoot hash: {value}")
             merkle_root = value
-            value = ""
-            for j in range(4):
-                b = f.read(1).hex().upper()
-                value = b + value
+            value = read_from_file(f, 4)
             output.append(f"Time stamp: {value}")
-            value = ""
-            for j in range(4):
-                b = f.read(1).hex().upper()
-                value = b + value
+            value = read_from_file(f, 4)
             output.append(f"Difficulty: {value}")
-            value = ""
-            for j in range(4):
-                b = f.read(1).hex().upper()
-                value = b + value
+            value = read_from_file(f, 4)
             output.append(f"Random number: {value}")
             value = ""
             b = f.read(1)
@@ -130,12 +116,9 @@ for input_fname in fnames:
             pos_2 = 0
             tx_hashes = []
             for k in range(trans_count):
-                value = ""
                 raw_tx = ""
                 pos_1 = f.tell()
-                for j in range(4):
-                    b = f.read(1).hex().upper()
-                    value = b + value
+                value = read_from_file(f, 4)
                 output.append(f"Transaction version: {value}")
                 raw_tx = reverse_pairs(value)
                 value = ""
@@ -174,15 +157,10 @@ for input_fname in fnames:
                 raw_tx = raw_tx + reverse_pairs(value)
                 value = ""
                 for m in range(in_count):
-                    for j in range(32):
-                        b = f.read(1).hex().upper()
-                        value = b + value
+                    value = read_from_file(f, 32)
                     output.append(f"TX from hash: {value}")
                     raw_tx = raw_tx + reverse_pairs(value)
-                    value = ""
-                    for j in range(4):
-                        b = f.read(1).hex().upper()
-                        value = b + value
+                    value = read_from_file(f, 4)
                     output.append(f"N output: {value}")
                     raw_tx = raw_tx + reverse_pairs(value)
                     value = ""
@@ -242,9 +220,7 @@ for input_fname in fnames:
                 raw_tx = raw_tx + reverse_pairs(value)
                 value = ""
                 for m in range(output_count):
-                    for j in range(8):
-                        b = f.read(1).hex().upper()
-                        value = b + value
+                    value = read_from_file(f, 8)
                     output.append(f"Value: {value}")
                     raw_tx = raw_tx + reverse_pairs(value)
                     value = ""
@@ -320,9 +296,7 @@ for input_fname in fnames:
                             output.append(f"Witness {m} {j} {witness_item_length} {value}")
                             value = ""
                 is_witness = False
-                for j in range(4):
-                    b = f.read(1).hex().upper()
-                    value = b + value
+                value = read_from_file(f, 4)
                 output.append(f"Lock time: {value}")
                 raw_tx = raw_tx + reverse_pairs(value)
                 value = bytes.fromhex(raw_tx)
