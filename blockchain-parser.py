@@ -47,6 +47,21 @@ def read_flag(file):
     return f.read(amount_to_read)[::-1] if amount_to_read else b
 
 
+def read_value_and_len(file):
+    b = file.read(1)
+    flag = ord(b)
+    if flag < 253:
+        value = b
+    amount_to_read = 2 if flag == 253 else \
+                     4 if flag == 254 else \
+                     8 if flag == 255 else 0
+    if amount_to_read:
+        value = file.read(amount_to_read)[::-1]
+    length = int(value.hex(), 16)
+    if amount_to_read:
+        value = value + b
+    return value.hex().upper(), length
+
 
 input_dir = "_blocks"  # Folder with blk*.dat files
 output_dir = "_result"
@@ -180,21 +195,7 @@ for input_fname in fnames:
                     output.append(f"Value: {value}")
                     raw = raw + reverse_pairs(value)
 
-                    b = f.read(1)
-                    flag = ord(b)
-                    c = 0
-                    if flag < 253:
-                        value = b
-                    if flag == 253: c = 2
-                    if flag == 254: c = 4
-                    if flag == 255: c = 8
-                    if c:
-                        value = f.read(c)[::-1]
-                    script_length = int(value.hex(), 16)
-                    if c:
-                        value = value + b
-                    value = value.hex().upper()
-
+                    value, script_length = read_value_and_len(f)
                     raw = raw + reverse_pairs(value)
                     value = f.read(script_length).hex().upper()
                     output.append(f"Output script: {value}")
