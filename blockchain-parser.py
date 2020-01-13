@@ -92,32 +92,34 @@ for input_fname in fnames:
                 value = f.read(4)[::-1].hex().upper()
                 output.append(f"Transaction version: {value}")
                 raw = reverse_pairs(value)
+
                 value = ""
                 b = f.read(1)
-                b_int = ord(b)
-                tmp_b = b.hex().upper()
+                flag = ord(b)
+                appendix_2 = b.hex().upper()
                 is_witness = False
-                if b_int == 0:
+                if flag == 0:
                     f.seek(1, 1)  # skip 1 byte
                     c = f.read(1)
-                    b_int = ord(c)
-                    tmp_b = c.hex().upper()
+                    flag = ord(c)
+                    appendix_2 = c.hex().upper()
                     is_witness = True
                     output.append("Witness activated")
                 c = 0
-                if b_int < 253:
-                    value = hex(b_int)[2:].upper().zfill(2)
-                    tmp_b = ""
-                if b_int == 253:
+                if flag < 253:
+                    value = hex(flag)[2:].upper().zfill(2)
+                    appendix_2 = ""
+                if flag == 253:
                     c = 2
-                if b_int == 254:
+                if flag == 254:
                     c = 4
-                if b_int == 255:
+                if flag == 255:
                     c = 8
                 value = f.read(c)[::-1].hex().upper() + value
                 inputs_count = int(value, 16)
                 output.append(f"Inputs count: {value}")
-                value = value + tmp_b
+                value = value + appendix_2
+
                 raw = raw + reverse_pairs(value)
                 for _ in range(inputs_count):
                     value = f.read(32)[::-1].hex().upper()
@@ -126,23 +128,25 @@ for input_fname in fnames:
                     value = f.read(4)[::-1].hex().upper()
                     output.append(f"N output: {value}")
                     raw = raw + reverse_pairs(value)
+
                     value = ""
                     b = f.read(1)
-                    b_int = ord(b)
-                    tmp_b = b.hex().upper()
+                    flag = ord(b)
+                    appendix_2 = b.hex().upper()
                     c = 0
-                    if b_int < 253:
+                    if flag < 253:
                         value = b.hex().upper()
-                        tmp_b = ""
-                    if b_int == 253:
+                        appendix_2 = ""
+                    if flag == 253:
                         c = 2
-                    if b_int == 254:
+                    if flag == 254:
                         c = 4
-                    if b_int == 255:
+                    if flag == 255:
                         c = 8
                     value = f.read(c)[::-1].hex().upper() + value
                     script_length = int(value, 16)
-                    value = value + tmp_b
+                    value = value + appendix_2
+
                     raw = raw + reverse_pairs(value)
                     value = f.read(script_length).hex().upper()
                     output.append(f"Input script: {value}")
@@ -150,46 +154,47 @@ for input_fname in fnames:
                     value = f.read(4).hex().upper()
                     output.append(f"Sequence: {value}")
                     raw = raw + value
+
                 value = ""
                 b = f.read(1)
-                b_int = ord(b)
-                tmp_b = b.hex().upper()
+                flag = ord(b)
+                appendix_2 = b.hex().upper()
                 c = 0
-                if b_int < 253:
+                if flag < 253:
                     value = b.hex().upper()
-                    tmp_b = ""
-                if b_int == 253:
+                    appendix_2 = ""
+                if flag == 253:
                     c = 2
-                if b_int == 254:
+                if flag == 254:
                     c = 4
-                if b_int == 255:
+                if flag == 255:
                     c = 8
                 value = f.read(c)[::-1].hex().upper() + value
                 outputs_count = int(value, 16)
-                value = value + tmp_b
+                value = value + appendix_2
+
                 output.append(f"Outputs count: {outputs_count}")
                 raw = raw + reverse_pairs(value)
                 for _ in range(outputs_count):
                     value = f.read(8)[::-1].hex().upper()
                     output.append(f"Value: {value}")
                     raw = raw + reverse_pairs(value)
-                    value = ""
+
                     b = f.read(1)
-                    b_int = ord(b)
-                    tmp_b = b.hex().upper()
+                    flag = ord(b)
                     c = 0
-                    if b_int < 253:
-                        value = b.hex().upper()
-                        tmp_b = ""
-                    if b_int == 253:
-                        c = 2
-                    if b_int == 254:
-                        c = 4
-                    if b_int == 255:
-                        c = 8
-                    value = f.read(c)[::-1].hex().upper() + value
-                    script_length = int(value, 16)
-                    value = value + tmp_b
+                    if flag < 253:
+                        value = b
+                    if flag == 253: c = 2
+                    if flag == 254: c = 4
+                    if flag == 255: c = 8
+                    if c:
+                        value = f.read(c)[::-1]
+                    script_length = int(value.hex(), 16)
+                    if c:
+                        value = value + b
+                    value = value.hex().upper()
+
                     raw = raw + reverse_pairs(value)
                     value = f.read(script_length).hex().upper()
                     output.append(f"Output script: {value}")
