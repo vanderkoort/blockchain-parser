@@ -88,10 +88,10 @@ for input_fname in fnames:
             output.append("")
             tx_hashes = []
             for _ in range(trans_count):
-                raw_tx = ""
+                raw = ""
                 value = f.read(4)[::-1].hex().upper()
                 output.append(f"Transaction version: {value}")
-                raw_tx = reverse_pairs(value)
+                raw = reverse_pairs(value)
                 value = ""
                 b = f.read(1)
                 tmp_b = b.hex().upper()
@@ -106,115 +106,94 @@ for input_fname in fnames:
                     output.append("Witness activated")
                 c = 0
                 if b_int < 253:
-                    c = 1
                     value = hex(b_int)[2:].upper().zfill(2)
                     tmp_b = ""
                 if b_int == 253:
-                    c = 3
+                    c = 2
                 if b_int == 254:
-                    c = 5
+                    c = 4
                 if b_int == 255:
-                    c = 9
-                for j in range(1, c):
-                    b = f.read(1).hex().upper()
-                    value = b + value
+                    c = 8
+                value = f.read(c)[::-1].hex().upper() + value
                 inputs_count = int(value, 16)
                 output.append(f"Inputs count: {value}")
                 value = value + tmp_b
-                raw_tx = raw_tx + reverse_pairs(value)
+                raw = raw + reverse_pairs(value)
                 for _ in range(inputs_count):
                     value = f.read(32)[::-1].hex().upper()
                     output.append(f"TX from hash: {value}")
-                    raw_tx = raw_tx + reverse_pairs(value)
+                    raw = raw + reverse_pairs(value)
                     value = f.read(4)[::-1].hex().upper()
                     output.append(f"N output: {value}")
-                    raw_tx = raw_tx + reverse_pairs(value)
+                    raw = raw + reverse_pairs(value)
                     value = ""
                     b = f.read(1)
                     tmp_b = b.hex().upper()
                     b_int = int(b.hex(), 16)
                     c = 0
                     if b_int < 253:
-                        c = 1
                         value = b.hex().upper()
                         tmp_b = ""
                     if b_int == 253:
-                        c = 3
+                        c = 2
                     if b_int == 254:
-                        c = 5
+                        c = 4
                     if b_int == 255:
-                        c = 9
-                    for j in range(1, c):
-                        b = f.read(1).hex().upper()
-                        value = b + value
+                        c = 8
+                    value = f.read(c)[::-1].hex().upper() + value
                     script_length = int(value, 16)
                     value = value + tmp_b
-                    raw_tx = raw_tx + reverse_pairs(value)
-                    value = ""
-                    for j in range(script_length):
-                        b = f.read(1).hex().upper()
-                        value = value + b
+                    raw = raw + reverse_pairs(value)
+                    value = f.read(script_length).hex().upper()
                     output.append(f"Input script: {value}")
-                    raw_tx = raw_tx + value
-                    value = ""
-                    for j in range(4):
-                        b = f.read(1).hex().upper()
-                        value = value + b
+                    raw = raw + value
+                    value = f.read(4).hex().upper()
                     output.append(f"Sequence: {value}")
-                    raw_tx = raw_tx + value
+                    raw = raw + value
                 value = ""
                 b = f.read(1)
                 tmp_b = b.hex().upper()
                 b_int = int(b.hex(), 16)
                 c = 0
                 if b_int < 253:
-                    c = 1
                     value = b.hex().upper()
                     tmp_b = ""
                 if b_int == 253:
-                    c = 3
+                    c = 2
                 if b_int == 254:
-                    c = 5
+                    c = 4
                 if b_int == 255:
-                    c = 9
-                for j in range(1, c):
-                    b = f.read(1).hex().upper()
-                    value = b + value
+                    c = 8
+                value = f.read(c)[::-1].hex().upper() + value
                 outputs_count = int(value, 16)
                 value = value + tmp_b
                 output.append(f"Outputs count: {outputs_count}")
-                raw_tx = raw_tx + reverse_pairs(value)
+                raw = raw + reverse_pairs(value)
                 for _ in range(outputs_count):
                     value = f.read(8)[::-1].hex().upper()
                     output.append(f"Value: {value}")
-                    raw_tx = raw_tx + reverse_pairs(value)
+                    raw = raw + reverse_pairs(value)
                     value = ""
                     b = f.read(1)
                     tmp_b = b.hex().upper()
                     b_int = int(b.hex(), 16)
                     c = 0
                     if b_int < 253:
-                        c = 1
                         value = b.hex().upper()
                         tmp_b = ""
                     if b_int == 253:
-                        c = 3
+                        c = 2
                     if b_int == 254:
-                        c = 5
+                        c = 4
                     if b_int == 255:
-                        c = 9
-                    for j in range(1, c):
-                        b = f.read(1).hex().upper()
-                        value = b + value
+                        c = 8
+                    value = f.read(c)[::-1].hex().upper() + value
                     script_length = int(value, 16)
                     value = value + tmp_b
-                    raw_tx = raw_tx + reverse_pairs(value)
-                    value = ""
-                    for j in range(script_length):
-                        b = f.read(1).hex().upper()
-                        value = value + b
+                    raw = raw + reverse_pairs(value)
+                    value = f.read(script_length).hex().upper()
                     output.append(f"Output script: {value}")
-                    raw_tx = raw_tx + value
+                    raw = raw + value
                 if is_witness:
                     for i_input in range(inputs_count):
                         witness_length = int(read_flag(f).hex(), 16)
@@ -225,8 +204,8 @@ for input_fname in fnames:
                 is_witness = False
                 value = f.read(4)[::-1].hex().upper()
                 output.append(f"Lock time: {value}")
-                raw_tx = raw_tx + reverse_pairs(value)
-                value = bytes.fromhex(raw_tx)
+                raw = raw + reverse_pairs(value)
+                value = bytes.fromhex(raw)
                 value = reverse_pairs(sha256digdig(value).hex().upper())
                 output.append(f"TX hash: {value}")
                 tx_hashes.append(bytes.fromhex(value))
