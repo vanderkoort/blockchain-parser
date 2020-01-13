@@ -273,7 +273,7 @@ for input_fname in fnames:
                     output.append(f"Output script: {value}")
                     raw_tx = raw_tx + value
                     value = ""
-                if is_witness == True:
+                if is_witness:
                     for m in range(in_count):
                         value = ""
                         b = f.read(1)
@@ -323,18 +323,15 @@ for input_fname in fnames:
                     value = b + value
                 output.append(f"Lock time: {value}")
                 raw_tx = raw_tx + reverse_pairs(value)
-                value = raw_tx
-                value = bytes.fromhex(value)
+                value = bytes.fromhex(raw_tx)
                 value = hashlib.new("sha256", value).digest()
                 value = hashlib.new("sha256", value).digest()
-                value = value.hex().upper()
-                value = reverse_pairs(value)
+                value = reverse_pairs(value.hex().upper())
                 output.append(f"TX hash: {value}")
-                tx_hashes.append(value)
+                tx_hashes.append(bytes.fromhex(value))
                 output.append("")
             output.append("")
 
-            tx_hashes = [bytes.fromhex(h) for h in tx_hashes]
             computed_merkle_root = get_merkle_root(tx_hashes).hex().upper()
             if computed_merkle_root != merkle_root:
                 print("Merkle roots do not match!\n{merkle_root}\n{computed_merkle_root}")
