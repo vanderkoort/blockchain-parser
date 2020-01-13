@@ -52,7 +52,8 @@ def read_flag(file):
     amount_to_read = 2 if flag == 253 else \
                      4 if flag == 254 else \
                      8 if flag == 255 else 0
-    return f.read(amount_to_read)[::-1] if amount_to_read else b
+    flag_value = f.read(amount_to_read)[::-1] if amount_to_read else b
+    return int(flag_value.hex(), 16)
 
 
 def read_value_and_len(file):
@@ -99,7 +100,7 @@ for input_fname in fnames:
             output.append(f"Time stamp: {f.read(4)[::-1].hex().upper()}")
             output.append(f"Difficulty: {f.read(4)[::-1].hex().upper()}")
             output.append(f"Random number: {f.read(4)[::-1].hex().upper()}")
-            trans_count = int(read_flag(f).hex(), 16)
+            trans_count = read_flag(f)
             output.append(f"Transactions count: {trans_count}")
             output.append("")
             tx_hashes = []
@@ -203,9 +204,9 @@ for input_fname in fnames:
                     raw = raw + value
                 if is_witness:
                     for i_input in range(inputs_count):
-                        witness_length = int(read_flag(f).hex(), 16)
+                        witness_length = read_flag(f)
                         for i_witness in range(witness_length):
-                            witness_item_length = int(read_flag(f).hex(), 16)
+                            witness_item_length = read_flag(f)
                             value = f.read(witness_item_length)[::-1].hex().upper()
                             output.append(f"Witness {i_input} {i_witness} {witness_item_length} {value}")
                 is_witness = False
