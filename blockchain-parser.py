@@ -46,12 +46,16 @@ def get_merkle_root(lst):  # https://gist.github.com/anonymous/7eb080a67398f648c
     return get_merkle_root([hash_pair(x, y) for x, y in zip(*[iter(lst)] * 2)])
 
 
+def get_amount_from_flag(flag):
+    return 2 if flag == 253 else \
+           4 if flag == 254 else \
+           8 if flag == 255 else 0
+
+
 def read_flag(file):
     b = file.read(1)
     flag = ord(b)
-    amount_to_read = 2 if flag == 253 else \
-                     4 if flag == 254 else \
-                     8 if flag == 255 else 0
+    amount_to_read = get_amount_from_flag(flag)
     flag_value = f.read(amount_to_read)[::-1] if amount_to_read else b
     return int(flag_value.hex(), 16)
 
@@ -61,9 +65,7 @@ def read_value_and_len(file):
     flag = ord(b)
     if flag < 253:
         value = b
-    amount_to_read = 2 if flag == 253 else \
-                     4 if flag == 254 else \
-                     8 if flag == 255 else 0
+    amount_to_read = get_amount_from_flag(flag)
     if amount_to_read:
         value = file.read(amount_to_read)[::-1]
     length = int(value.hex(), 16)
