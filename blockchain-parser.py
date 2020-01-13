@@ -26,9 +26,12 @@ def reverse_pairs(string_of_pairs):
     return result
 
 
+def sha256digdig(x):
+    return hashlib.sha256(hashlib.sha256(x).digest()).digest()
+
+
 def get_merkle_root(lst):  # https://gist.github.com/anonymous/7eb080a67398f648c1709e41890f8c44
-    sha256d = lambda x: hashlib.sha256(hashlib.sha256(x).digest()).digest()
-    hash_pair = lambda x, y: sha256d(x[::-1] + y[::-1])[::-1]
+    hash_pair = lambda x, y: sha256digdig(x[::-1] + y[::-1])[::-1]
     if len(lst) == 1:
         return lst[0]
     if len(lst) % 2 == 1:
@@ -68,8 +71,7 @@ for input_fname in fnames:
                 b = f.read(1).hex().upper()
                 value = value + b
             value = bytes.fromhex(value)
-            value = hashlib.new("sha256", value).digest()
-            value = hashlib.new("sha256", value).digest()
+            value = sha256digdig(value)
             value = value.hex().upper()
             value = reverse_pairs(value)
             output.append(f"SHA256 hash of the current block hash: {value}")
@@ -324,8 +326,7 @@ for input_fname in fnames:
                 output.append(f"Lock time: {value}")
                 raw_tx = raw_tx + reverse_pairs(value)
                 value = bytes.fromhex(raw_tx)
-                value = hashlib.new("sha256", value).digest()
-                value = hashlib.new("sha256", value).digest()
+                value = sha256digdig(value)
                 value = reverse_pairs(value.hex().upper())
                 output.append(f"TX hash: {value}")
                 tx_hashes.append(bytes.fromhex(value))
