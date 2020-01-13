@@ -40,11 +40,8 @@ def get_merkle_root(lst):  # https://gist.github.com/anonymous/7eb080a67398f648c
 
 
 def read_from_file(file, count):
-    hex_value = ""
-    for i in range(count):
-        b = file.read(1).hex().upper()
-        hex_value = b + hex_value
-    return hex_value
+    raw = file.read(count)
+    return raw[::-1].hex().upper()
 
 
 def flagged_read_from_file(file):
