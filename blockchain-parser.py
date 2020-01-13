@@ -47,6 +47,16 @@ def read_from_file(file, count):
     return hex_value
 
 
+def flagged_read_from_file(file):
+    b = file.read(1)
+    flag = ord(b)
+    amount_to_read = 2 if flag == 253 else \
+                     4 if flag == 254 else \
+                     8 if flag == 255 else 0
+    return read_from_file(file, amount_to_read) if amount_to_read else b.hex().upper()
+
+
+
 input_dir = "_blocks"  # Folder with blk*.dat files
 output_dir = "_result"
 if len(sys.argv) == 3:
@@ -93,22 +103,7 @@ for input_fname in fnames:
             output.append(f"Difficulty: {value}")
             value = read_from_file(f, 4)
             output.append(f"Random number: {value}")
-            value = ""
-            b = f.read(1)
-            b_int = int(b.hex(), 16)
-            c = 0
-            if b_int < 253:
-                c = 1
-                value = b.hex().upper()
-            if b_int == 253:
-                c = 3
-            if b_int == 254:
-                c = 5
-            if b_int == 255:
-                c = 9
-            for j in range(1, c):
-                b = f.read(1).hex().upper()
-                value = b + value
+            value = flagged_read_from_file(f)
             trans_count = int(value, 16)
             output.append(f"Transactions count: {trans_count}")
             output.append("")
@@ -253,46 +248,13 @@ for input_fname in fnames:
                     value = ""
                 if is_witness:
                     for m in range(in_count):
-                        value = ""
-                        b = f.read(1)
-                        b_int = int(b.hex(), 16)
-                        c = 0
-                        if b_int < 253:
-                            c = 1
-                            value = b.hex().upper()
-                        if b_int == 253:
-                            c = 3
-                        if b_int == 254:
-                            c = 5
-                        if b_int == 255:
-                            c = 9
-                        for j in range(1, c):
-                            b = f.read(1).hex().upper()
-                            value = b + value
+                        value = flagged_read_from_file(f)
                         witness_length = int(value, 16)
                         value = ""
                         for j in range(witness_length):
-                            value = ""
-                            b = f.read(1)
-                            b_int = int(b.hex(), 16)
-                            c = 0
-                            if b_int < 253:
-                                c = 1
-                                value = b.hex().upper()
-                            if b_int == 253:
-                                c = 3
-                            if b_int == 254:
-                                c = 5
-                            if b_int == 255:
-                                c = 9
-                            for j in range(1, c):
-                                b = f.read(1).hex().upper()
-                                value = b + value
+                            value = flagged_read_from_file(f)
                             witness_item_length = int(value, 16)
-                            value = ""
-                            for p in range(witness_item_length):
-                                b = f.read(1).hex().upper()
-                                value = b + value
+                            value = read_from_file(f, witness_item_length)
                             output.append(f"Witness {m} {j} {witness_item_length} {value}")
                             value = ""
                 is_witness = False
