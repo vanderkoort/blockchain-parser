@@ -71,11 +71,11 @@ fnames.sort()
 for input_fname in fnames:
     output_fname = input_fname.replace(".dat", ".txt")
     output = []
-    t = f"{input_dir}/{input_fname}"
+    input_path = f"{input_dir}/{input_fname}"
     print(f"Parsing {input_fname}, started at {time.strftime('%H:%M:%S', time.localtime())}...", end=" ", flush=True)
     start = time.monotonic()
-    with open(t, "rb") as f:
-        input_fsize = os.path.getsize(t)
+    with open(input_path, "rb") as f:
+        input_fsize = os.path.getsize(input_path)
         while f.tell() != input_fsize:
             f.seek(4, 1)  # skip 4 bytes
             value = read_from_file(f, 4)
