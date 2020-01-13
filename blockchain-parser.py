@@ -56,18 +56,15 @@ def read_flag(file):
     b = file.read(1)
     flag = ord(b)
     amount_to_read = get_amount_from_flag(flag)
-    flag_value = f.read(amount_to_read)[::-1] if amount_to_read else b
+    flag_value = file.read(amount_to_read)[::-1] if amount_to_read else b
     return int(flag_value.hex(), 16)
 
 
 def read_value_and_len(file):
     b = file.read(1)
     flag = ord(b)
-    if flag < 253:
-        value = b
     amount_to_read = get_amount_from_flag(flag)
-    if amount_to_read:
-        value = file.read(amount_to_read)[::-1]
+    value = file.read(amount_to_read)[::-1] if amount_to_read else b
     length = int(value.hex(), 16)
     if amount_to_read:
         value = value + b
@@ -112,11 +109,11 @@ for input_fname in fnames:
                 output.append(f"Transaction version: {value}")
                 raw = reverse_pairs(value)
 
-                value = ""
+                is_witness = False
                 b = f.read(1)
                 flag = ord(b)
+                appendix_1 = ""
                 appendix_2 = b.hex().upper()
-                is_witness = False
                 if flag == 0:
                     f.seek(1, 1)  # skip 1 byte
                     c = f.read(1)
@@ -126,15 +123,12 @@ for input_fname in fnames:
                     output.append("Witness activated")
                 c = 0
                 if flag < 253:
-                    value = hex(flag)[2:].upper().zfill(2)
+                    appendix_1 = hex(flag)[2:].upper().zfill(2)
                     appendix_2 = ""
-                if flag == 253:
-                    c = 2
-                if flag == 254:
-                    c = 4
-                if flag == 255:
-                    c = 8
-                value = f.read(c)[::-1].hex().upper() + value
+                if flag == 253: c = 2
+                if flag == 254: c = 4
+                if flag == 255: c = 8
+                value = f.read(c)[::-1].hex().upper() + appendix_1
                 inputs_count = int(value, 16)
                 output.append(f"Inputs count: {value}")
                 value = value + appendix_2
@@ -148,24 +142,7 @@ for input_fname in fnames:
                     output.append(f"N output: {value}")
                     raw = raw + reverse_pairs(value)
 
-                    value = ""
-                    b = f.read(1)
-                    flag = ord(b)
-                    appendix_2 = b.hex().upper()
-                    c = 0
-                    if flag < 253:
-                        value = b.hex().upper()
-                        appendix_2 = ""
-                    if flag == 253:
-                        c = 2
-                    if flag == 254:
-                        c = 4
-                    if flag == 255:
-                        c = 8
-                    value = f.read(c)[::-1].hex().upper() + value
-                    script_length = int(value, 16)
-                    value = value + appendix_2
-
+                    value, script_length = read_value_and_len(f)
                     raw = raw + reverse_pairs(value)
                     value = f.read(script_length).hex().upper()
                     output.append(f"Input script: {value}")
@@ -174,24 +151,7 @@ for input_fname in fnames:
                     output.append(f"Sequence: {value}")
                     raw = raw + value
 
-                value = ""
-                b = f.read(1)
-                flag = ord(b)
-                appendix_2 = b.hex().upper()
-                c = 0
-                if flag < 253:
-                    value = b.hex().upper()
-                    appendix_2 = ""
-                if flag == 253:
-                    c = 2
-                if flag == 254:
-                    c = 4
-                if flag == 255:
-                    c = 8
-                value = f.read(c)[::-1].hex().upper() + value
-                outputs_count = int(value, 16)
-                value = value + appendix_2
-
+                value, outputs_count = read_value_and_len(f)
                 output.append(f"Outputs count: {outputs_count}")
                 raw = raw + reverse_pairs(value)
                 for _ in range(outputs_count):
