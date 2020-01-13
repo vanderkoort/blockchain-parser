@@ -90,19 +90,13 @@ for input_fname in fnames:
             value = reverse_pairs(value.hex().upper())
             output.append(f"SHA256 hash of the current block hash: {value}")
             f.seek(pos_3, 0)
-            value = read_from_file(f, 4)
-            output.append(f"Version: {value}")
-            value = read_from_file(f, 32)
-            output.append(f"SHA256 hash of the previous block hash: {value}")
-            value = read_from_file(f, 32)
-            output.append(f"MerkleRoot hash: {value}")
-            merkle_root = value
-            value = read_from_file(f, 4)
-            output.append(f"Time stamp: {value}")
-            value = read_from_file(f, 4)
-            output.append(f"Difficulty: {value}")
-            value = read_from_file(f, 4)
-            output.append(f"Random number: {value}")
+            output.append(f"Version: {read_from_file(f, 4)}")
+            output.append(f"SHA256 hash of the previous block hash: {read_from_file(f, 32)}")
+            merkle_root = read_from_file(f, 32)
+            output.append(f"MerkleRoot hash: {merkle_root}")
+            output.append(f"Time stamp: {read_from_file(f, 4)}")
+            output.append(f"Difficulty: {read_from_file(f, 4)}")
+            output.append(f"Random number: {read_from_file(f, 4)}")
             value = flagged_read_from_file(f)
             trans_count = int(value, 16)
             output.append(f"Transactions count: {trans_count}")
@@ -150,7 +144,6 @@ for input_fname in fnames:
                 output.append(f"Inputs count: {value}")
                 value = value + tmp_b
                 raw_tx = raw_tx + reverse_pairs(value)
-                value = ""
                 for m in range(in_count):
                     value = read_from_file(f, 32)
                     output.append(f"TX from hash: {value}")
@@ -191,7 +184,7 @@ for input_fname in fnames:
                         value = value + b
                     output.append(f"Sequence: {value}")
                     raw_tx = raw_tx + value
-                    value = ""
+                value = ""
                 b = f.read(1)
                 tmp_b = b.hex().upper()
                 b_int = int(b.hex(), 16)
@@ -213,7 +206,6 @@ for input_fname in fnames:
                 value = value + tmp_b
                 output.append(f"Outputs count: {output_count}")
                 raw_tx = raw_tx + reverse_pairs(value)
-                value = ""
                 for m in range(output_count):
                     value = read_from_file(f, 8)
                     output.append(f"Value: {value}")
@@ -245,18 +237,15 @@ for input_fname in fnames:
                         value = value + b
                     output.append(f"Output script: {value}")
                     raw_tx = raw_tx + value
-                    value = ""
                 if is_witness:
                     for m in range(in_count):
                         value = flagged_read_from_file(f)
                         witness_length = int(value, 16)
-                        value = ""
                         for j in range(witness_length):
                             value = flagged_read_from_file(f)
                             witness_item_length = int(value, 16)
                             value = read_from_file(f, witness_item_length)
                             output.append(f"Witness {m} {j} {witness_item_length} {value}")
-                            value = ""
                 is_witness = False
                 value = read_from_file(f, 4)
                 output.append(f"Lock time: {value}")
