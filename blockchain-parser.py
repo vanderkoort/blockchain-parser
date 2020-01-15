@@ -29,12 +29,12 @@ def reverse_pairs(string_of_pairs):
     return result
 
 
-def sha256digdig(x):
+def double_sha256(x):
     return hashlib.sha256(hashlib.sha256(x).digest()).digest()
 
 
 def get_merkle_root(lst):  # https://gist.github.com/anonymous/7eb080a67398f648c1709e41890f8c44
-    hash_pair = lambda x, y: sha256digdig(x[::-1] + y[::-1])[::-1]
+    hash_pair = lambda x, y: double_sha256(x[::-1] + y[::-1])[::-1]
     if len(lst) == 1:
         return lst[0]
     if len(lst) % 2 == 1:
@@ -67,8 +67,7 @@ def read_value_and_len(file):
     return value.hex().upper(), length
 
 
-fnames = os.listdir(input_dir)
-fnames = [x for x in fnames if (x.endswith(".dat") and x.startswith("blk"))]
+fnames = [x for x in os.listdir(input_dir) if (x.endswith(".dat") and x.startswith("blk"))]
 fnames.sort()
 
 for input_fname in fnames:
@@ -85,7 +84,7 @@ for input_fname in fnames:
             output.append(f"Block size: {value.hex().upper()}")
             pos_hash = f.tell()
             value = f.read(80)
-            value = sha256digdig(value)[::-1]
+            value = double_sha256(value)[::-1]
             output.append(f"SHA256 hash of the current block hash: {value.hex().upper()}")
             f.seek(pos_hash, 0)
             output.append(f"Version: {f.read(4)[::-1].hex().upper()}")
@@ -172,7 +171,7 @@ for input_fname in fnames:
                 output.append(f"Lock time: {value}")
                 raw = raw + reverse_pairs(value)
                 value = bytes.fromhex(raw)
-                value = reverse_pairs(sha256digdig(value).hex().upper())
+                value = reverse_pairs(double_sha256(value).hex().upper())
                 output.append(f"TX hash: {value}")
                 tx_hashes.append(bytes.fromhex(value))
                 output.append("")
